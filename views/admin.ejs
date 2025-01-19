@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=`, initial-scale=1.0" />
+    <title>Task Manager ADMIN</title>
+  </head>
+  <body>
+    <header></header>
+    <main>
+      <div class="box" id="heading">
+        <h1>Add new employee</h1>
+        <h2><%= listEmployeeTitle %></h2>
+      </div>
+      <div class="box employee">
+        <% for(let employee of listEmployees){%>
+        <div class="employee">
+          <form action="/delete-employee" method="post">
+            <input
+              type="checkbox"
+              onchange="this.form.submit()"
+              name="deleteEmployeeId"
+              value="<%= employee.id %>"
+            />
+          </form>
+          <p id="name<%= employee.id %>"><%= employee.name %></p>
+
+          <form class="edit-employee" action="/edit-employee" method="post">
+            <input
+              type="hidden"
+              name="updateIdEmployee"
+              value="<%= employee.id %>"
+            />
+            <input
+              id="input<%= employee.id %>"
+              type="text"
+              name="updatedEmployeeName"
+              value="<%= employee.name %>"
+              autocomplete="off"
+              autofocus="true"
+              hidden="true"
+            />
+            <button
+              id="doneEmployee<%= employee.id %>"
+              class="editEmployee"
+              type="submit"
+              hidden
+            >
+              <img src="" alt="tick image" />
+            </button>
+          </form>
+          <button
+            id="editEmployee<%= employee.id %>"
+            class="edit"
+            onclick="
+            handler('<%employee.id%>')"
+          >
+            <img class="icon" src="" alt="pencil-image" />
+          </button>
+        </div>
+
+        <% } %>
+
+        <form class="employee" action="/add-employee" method="post">
+          <input
+            type="text"
+            name="newEmployee"
+            placeholder="New Employee"
+            autocomplete="off"
+            autofocus="true"
+          />
+          <button
+            class="addEmployee"
+            type="submit"
+            name="listEmployee"
+            value="<%= listEmployeeTitle %>"
+          >
+            +
+          </button>
+        </form>
+      </div>
+    </main>
+    <footer>
+      Copyright &copy <%= new Date().getFullYear() %>. All rights reserved.
+    </footer>
+
+    <script>
+      function handler(id) {
+        document.getElementById("name" + id).setAttribute("hidden", true);
+        document
+          .getElementById("editEmployee" + id)
+          .setAttribute("hidden", true);
+        document.getElementById("doneEmployee" + id).removeAttribute("hidden");
+        document.getElementById("input" + id).removeAttribute("hidden");
+      }
+    </script>
+  </body>
+</html>
