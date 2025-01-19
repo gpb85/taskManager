@@ -149,14 +149,16 @@
     </footer>
 
     <script>
-      function handler(id) {
-        if (type === "employyee") {
+      function handler(type, id) {
+        if (type === "employee") {
+          // Hide the employee's name and edit button
           document
             .getElementById("nameEmployee" + id)
             .setAttribute("hidden", true);
           document
             .getElementById("editEmployee" + id)
             .setAttribute("hidden", true);
+          // Show the input field and the done button
           document
             .getElementById("doneEmployee" + id)
             .removeAttribute("hidden");
@@ -164,13 +166,15 @@
             .getElementById("inputEmployee" + id)
             .removeAttribute("hidden");
         } else if (type === "task") {
+          // Hide the task title and edit button
           document
             .getElementById("titleTask" + id)
             .setAttribute("hidden", true);
           document.getElementById("editTask" + id).setAttribute("hidden", true);
+          // Show the input field and the done button
 
-          document.getElementById("doneTask" + Id).removeAttribute("hiddedn");
-          document, getElementById("inputTask" + id).removeAttribute("hidden");
+          document.getElementById("doneTask" + id).removeAttribute("hidden");
+          document.getElementById("inputTask" + id).removeAttribute("hidden");
         }
       }
     </script>
