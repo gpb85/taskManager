@@ -23,7 +23,7 @@
               value="<%= employee.id %>"
             />
           </form>
-          <p id="name<%= employee.id %>"><%= employee.name %></p>
+          <p id="nameEmployee<%= employee.id %>"><%= employee.name %></p>
 
           <form class="edit-employee" action="/edit-employee" method="post">
             <input
@@ -32,7 +32,7 @@
               value="<%= employee.id %>"
             />
             <input
-              id="input<%= employee.id %>"
+              id="inputEmployee<%= employee.id %>"
               type="text"
               name="updatedEmployeeName"
               value="<%= employee.name %>"
@@ -53,7 +53,7 @@
             id="editEmployee<%= employee.id %>"
             class="edit"
             onclick="
-            handler('<%employee.id%>')"
+            handler('employee','<%employee.id%>')"
           >
             <img class="icon" src="" alt="pencil-image" />
           </button>
@@ -79,6 +79,70 @@
           </button>
         </form>
       </div>
+
+      <div class="box task">
+        <% for (let task of listTasks){%>
+
+        <div class="task">
+          <form action="/delete-task" method="post">
+            <input
+              type="checkbox"
+              onchange="this.form.submit()"
+              name="deleteTaskId"
+              value="<%= task.id %>"
+            />
+          </form>
+
+          <p id="titleTask<%= task.id %>"><%= task.title %></p>
+
+          <form class="editTask" action="/edit-task" method="post">
+            <input type="hidden" name="updatedTaskId" value="<%= task.id %>" />
+            <input
+              id="inputTask<%= task.id %>"
+              type="text"
+              name="updatedTaskTitle"
+              value="<%= task.title %>"
+              autocomplete="off"
+              autofocus="true"
+              hidden="true"
+            />
+            <button
+              id="doneTask<%= task.id %>"
+              class="done"
+              type="submit"
+              hidden
+            >
+              <img src="" alt="tick-image" />
+            </button>
+          </form>
+          <button
+            id="editTask<%=task.id%>"
+            class="edit"
+            onclick="handler('task','<%=task.id%>')"
+          >
+            <img src="" alt="pencil-image" />
+          </button>
+        </div>
+        <%} %>
+
+        <form class="task" action="/add-task" method="post">
+          <input
+            type="text"
+            name="newTask"
+            placeholder="New Task"
+            autocomplete="off"
+            autofocus="true"
+          />
+          <button
+            class="add"
+            type="submit"
+            name="taskList"
+            value="<%= listTaskTitle %>"
+          >
+            +
+          </button>
+        </form>
+      </div>
     </main>
     <footer>
       Copyright &copy <%= new Date().getFullYear() %>. All rights reserved.
@@ -86,12 +150,28 @@
 
     <script>
       function handler(id) {
-        document.getElementById("name" + id).setAttribute("hidden", true);
-        document
-          .getElementById("editEmployee" + id)
-          .setAttribute("hidden", true);
-        document.getElementById("doneEmployee" + id).removeAttribute("hidden");
-        document.getElementById("input" + id).removeAttribute("hidden");
+        if (type === "employyee") {
+          document
+            .getElementById("nameEmployee" + id)
+            .setAttribute("hidden", true);
+          document
+            .getElementById("editEmployee" + id)
+            .setAttribute("hidden", true);
+          document
+            .getElementById("doneEmployee" + id)
+            .removeAttribute("hidden");
+          document
+            .getElementById("inputEmployee" + id)
+            .removeAttribute("hidden");
+        } else if (type === "task") {
+          document
+            .getElementById("titleTask" + id)
+            .setAttribute("hidden", true);
+          document.getElementById("editTask" + id).setAttribute("hidden", true);
+
+          document.getElementById("doneTask" + Id).removeAttribute("hiddedn");
+          document, getElementById("inputTask" + id).removeAttribute("hidden");
+        }
       }
     </script>
   </body>
