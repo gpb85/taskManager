@@ -28,7 +28,7 @@
           <form class="edit-employee" action="/edit-employee" method="post">
             <input
               type="hidden"
-              name="updateIdEmployee"
+              name="updatedIdEmployee"
               value="<%= employee.id %>"
             />
             <input
@@ -42,7 +42,7 @@
             />
             <button
               id="doneEmployee<%= employee.id %>"
-              class="editEmployee"
+              class="edit"
               type="submit"
               hidden
             >
@@ -137,7 +137,7 @@
             class="add"
             type="submit"
             name="taskList"
-            value="<%= listTaskTitle %>"
+            value="<%= listEmployeeTitle %>"
           >
             +
           </button>

@@ -3,3 +3,9 @@ CREATE TABLE employees(
     name VARCHAR(30) NOT NULL
     
 )
+
+CREATE TABLE tasks(
+    id SERIAL PRIMARY KEY,
+    title VARCHAR(200) NOT NULL,
+
+)
