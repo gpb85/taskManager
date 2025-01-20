@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=`, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Task Manager ADMIN</title>
   </head>
   <body>
@@ -23,16 +23,16 @@
               value="<%= employee.id %>"
             />
           </form>
-          <p id="nameEmployee<%= employee.id %>"><%= employee.name %></p>
+          <p id="employee<%= employee.id %>"><%= employee.name %></p>
 
-          <form class="edit-employee" action="/edit-employee" method="post">
+          <form action="/editEmployee" class="edit-employyee" method="post">
             <input
               type="hidden"
-              name="updatedIdEmployee"
+              name="updatedEmployeeId"
               value="<%= employee.id %>"
             />
             <input
-              id="inputEmployee<%= employee.id %>"
+              id="inputEmployee<%= employee.id  %>"
               type="text"
               name="updatedEmployeeName"
               value="<%= employee.name %>"
@@ -42,7 +42,7 @@
             />
             <button
               id="doneEmployee<%= employee.id %>"
-              class="edit"
+              class="done"
               type="submit"
               hidden
             >
@@ -52,8 +52,7 @@
           <button
             id="editEmployee<%= employee.id %>"
             class="edit"
-            onclick="
-            handler('employee','<%employee.id%>')"
+            onclick="handler('employee','<%= employee.id%>')"
           >
             <img class="icon" src="" alt="pencil-image" />
           </button>
@@ -152,9 +151,7 @@
       function handler(type, id) {
         if (type === "employee") {
           // Hide the employee's name and edit button
-          document
-            .getElementById("nameEmployee" + id)
-            .setAttribute("hidden", true);
+          document.getElementById("employee" + id).setAttribute("hidden", true);
           document
             .getElementById("editEmployee" + id)
             .setAttribute("hidden", true);

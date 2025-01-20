@@ -41,12 +41,31 @@ app.get("/", async (req, res) => {
   }
 });
 
-app.post("/edit-employee", async (req, res) => {
+app.post("/editEmployee", async (req, res) => {
   const name = req.body.updatedEmployeeName;
-  const id = req.body.updatedIdEmployee;
-
+  const id = req.body.updatedEmployeeId;
   try {
     await db.query("UPDATE employees SET name=($1) WHERE id=$2", [name, id]);
+    res.redirect("/");
+  } catch (error) {
+    console.error(error);
+  }
+});
+
+app.post("/delete-employee", async (req, res) => {
+  const id = req.body.deleteEmployeeId;
+  try {
+    await db.query("DELETE FROM employees WHERE id=$1", [id]);
+    res.redirect("/");
+  } catch (error) {
+    console.error(error);
+  }
+});
+
+app.post("/add-employee", async (req, res) => {
+  const employee = req.body.newEmployee;
+  try {
+    await db.query("INSERT INTO employees (name) VALUES($1)", [employee]);
     res.redirect("/");
   } catch (error) {
     console.error(error);
