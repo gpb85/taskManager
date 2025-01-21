@@ -121,6 +121,19 @@
           >
             <img src="" alt="pencil-image" />
           </button>
+
+          <form action="/assign-task" method="post">
+            <input type="hidden" name="taskId" value="<%= task.id %>" />
+
+            <label for="employee_id">Assign Task to Employee:</label>
+            <select name="employeeId" id="employee_id">
+              <% listEmployees.forEach(employee => { %>
+              <option value="<%= employee.id %>"><%= employee.name %></option>
+              <% }) %>
+            </select>
+
+            <button type="submit">Assign</button>
+          </form>
         </div>
         <%} %>
 
