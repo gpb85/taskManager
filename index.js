@@ -32,10 +32,17 @@ app.get("/", async (req, res) => {
       "SELECT tasks.*, employees.name AS employee_name FROM tasks LEFT JOIN employees ON tasks.employee_id = employees.id ORDER BY tasks.id ASC"
     );
     const tasks = tasksResult.rows;
+
+    const employeeTasks = await db.query(
+      "SELECT employees.name,tasks.title FROM TASKS JOIN employees ON tasks.employee_id=employees.id ORDER BY employees.name "
+    );
+    const tasksByEmployee = employeeTasks.rows;
+
     res.render("admin.ejs", {
       listEmployeeTitle: "Admin Window",
       listEmployees: employees,
       listTasks: tasks,
+      tasksByEmployee: tasksByEmployee, // tasks/employee
     });
   } catch (error) {
     console.error(error);
