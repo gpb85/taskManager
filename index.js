@@ -5,7 +5,7 @@ import pg from "pg";
 const app = express();
 const port = 3000;
 
-//database
+// Database connection
 const db = new pg.Client({
   user: "postgres",
   host: "localhost",
@@ -16,37 +16,25 @@ const db = new pg.Client({
 
 db.connect();
 
-//middleware
+// Middleware
 app.use(express.static("public"));
 app.use(bodyParser.urlencoded({ extended: true }));
 
-//get home page
-
-app.get("/", async (req, res) => {
+// GET: Employee tasks page
+app.get("/employee-tasks", async (req, res) => {
   try {
-    // Ανάκτηση υπαλλήλων
     const employeesResult = await db.query(
-      "SELECT * FROM employees ORDER  BY id ASC"
+      "SELECT * FROM employees ORDER BY id ASC"
     );
     const employees = employeesResult.rows;
 
-    // Ανάκτηση μη ανατεθειμένων tasks
-    const tasksResult = await db.query(
-      "SELECT tasks.*, employees.name AS employee_name FROM tasks LEFT JOIN employees ON tasks.employee_id = employees.id WHERE tasks.employee_id IS NULL ORDER BY tasks.id ASC"
+    const employeesTasks = await db.query(
+      "SELECT employees.name AS employee_name, tasks.title FROM tasks JOIN employees ON tasks.employee_id = employees.id ORDER BY employees.name"
     );
-    const tasks = tasksResult.rows;
+    const tasksByEmployee = employeesTasks.rows;
 
-    // Ανάκτηση εργασιών ανά υπάλληλο
-    const employeeTasks = await db.query(
-      "SELECT employees.name, tasks.title FROM tasks JOIN employees ON tasks.employee_id = employees.id ORDER BY employees.name"
-    );
-    const tasksByEmployee = employeeTasks.rows;
-
-    // Απόδοση δεδομένων στη σελίδα
-    res.render("admin.ejs", {
-      listEmployeeTitle: "Admin Window",
+    res.render("index.ejs", {
       listEmployees: employees,
-      listTasks: tasks, // Περιλαμβάνει μόνο μη ανατεθειμένα tasks
       tasksByEmployee: tasksByEmployee,
     });
   } catch (error) {
@@ -55,11 +43,79 @@ app.get("/", async (req, res) => {
   }
 });
 
-//employee
+// GET: Admin page
+app.get("/", async (req, res) => {
+  try {
+    // Fetch employees
+    const employeesResult = await db.query(
+      "SELECT * FROM employees ORDER BY id ASC"
+    );
+    const employees = employeesResult.rows;
 
+    // Fetch unassigned tasks
+    const tasksResult = await db.query(
+      "SELECT tasks.*, employees.name AS employee_name FROM tasks LEFT JOIN employees ON tasks.employee_id = employees.id WHERE tasks.employee_id IS NULL ORDER BY tasks.id ASC"
+    );
+    const tasks = tasksResult.rows;
+
+    // Fetch tasks by employee
+    const employeeTasks = await db.query(
+      "SELECT employees.name, tasks.title FROM tasks JOIN employees ON tasks.employee_id = employees.id ORDER BY employees.name"
+    );
+    const tasksByEmployee = employeeTasks.rows;
+
+    // Render the admin page
+    res.render("admin.ejs", {
+      listEmployeeTitle: "Admin Window",
+      listEmployees: employees,
+      listTasks: tasks, // Only unassigned tasks
+      tasksByEmployee: tasksByEmployee,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("An error occurred while fetching data");
+  }
+});
+
+app.post("/toggle-task-status", async (req, res) => {
+  const taskId = req.body.taskId;
+  const taskStatus = req.body.taskStatus === "true"; // Αν το checkbox είναι τσεκαρισμένο, taskStatus = true
+  console.log("taskId:", taskId); // Θα πρέπει να δεις το taskId
+  console.log("taskStatus:", taskStatus); // Θα πρέπει να δεις το taskStatus (true ή false)
+
+  if (!taskId) {
+    console.error("No taskId provided.");
+    return res.status(400).send("Task ID is required.");
+  }
+
+  try {
+    const tasksResult = await db.query(
+      "SELECT completed FROM tasks WHERE id=$1",
+      [taskId]
+    );
+    const task = tasksResult.rows[0];
+
+    if (!task) {
+      console.error("Task not found.");
+      return res.status(404).send("Task not found.");
+    }
+
+    // Ενημερώνουμε την κατάσταση του task στη βάση δεδομένων
+    await db.query("UPDATE tasks SET completed=$1 WHERE id=$2", [
+      taskStatus,
+      taskId,
+    ]);
+
+    res.redirect("/employee-tasks");
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("An error occurred while updating task status");
+  }
+});
+
+// Employee routes
 app.post("/editEmployee", async (req, res) => {
   const name = req.body.updatedEmployeeName;
-
   const id = req.body.updatedEmployeeId;
   try {
     await db.query("UPDATE employees SET name=($1) WHERE id=$2", [name, id]);
@@ -89,8 +145,7 @@ app.post("/add-employee", async (req, res) => {
   }
 });
 
-//task
-
+// Task routes
 app.post("/edit-task", async (req, res) => {
   const title = req.body.updatedTaskTitle;
   const id = req.body.updatedTaskId;
@@ -122,8 +177,7 @@ app.post("/add-task", async (req, res) => {
   }
 });
 
-//task-employee
-
+// Assign task to employee
 app.post("/assign-task", async (req, res) => {
   const { taskId, employeeId } = req.body;
   if (!taskId || !employeeId) {
@@ -137,10 +191,11 @@ app.post("/assign-task", async (req, res) => {
     res.redirect("/");
   } catch (error) {
     console.error(error);
-    res.status(500).send("An error occured while assigning the task");
+    res.status(500).send("An error occurred while assigning the task");
   }
 });
 
+// Start server
 app.listen(port, () => {
   console.log(`Server running on http://localhost:${port}`);
 });

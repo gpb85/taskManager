@@ -2,18 +2,45 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
     <link rel="stylesheet" href="style.css" />
+    <title>Task Manager</title>
   </head>
   <body>
-    <header></header>
+    <header><a href="/">View Admin Page</a></header>
     <main>
-      <div class="date-box box"><%= dateHeader %></div>
-      <div class="one-to-one box"></div>
-      <div class="many-to-one box"></div>
-      <div class="many-to-many box"></div>
+      <div class="box">
+        <h2>Assigned Tasks</h2>
+      </div>
+
+      <% for (let employee of listEmployees) { %>
+      <div class="employee-tasks">
+        <h3><%= employee.name %></h3>
+        <ul>
+          <% employeeTasks = tasksByEmployee.filter(task => task.employee_name
+          === employee.name); employeeTasks.forEach(task => { %>
+          <li
+            id="task<%= task.id %>"
+            class="<%= task.completed ? 'completed' : '' %>"
+          >
+            <form action="/toggle-task-status" method="post">
+              <input type="hidden" name="taskId" value="<%= task.id %>" />
+              <input type="checkbox" name="taskStatus" value="<%=task.id%>>"
+              onchange="this.form.submit()" <%= task.completed ? 'checked' : ''
+              %> />
+            </form>
+
+            <span><%= task.title %></span>
+            <!-- Εμφανίζουμε τον τίτλο του task -->
+          </li>
+          <% }); %>
+        </ul>
+      </div>
+      <% } %>
     </main>
-    <footer>Copyright @copy <%= new Date().getFullYear() %></footer>
+    <footer>
+      Copyright &copy <%= new Date().getFullYear() %>. All rights reserved.
+    </footer>
   </body>
 </html>
