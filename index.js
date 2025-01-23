@@ -24,29 +24,34 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 app.get("/", async (req, res) => {
   try {
+    // Ανάκτηση υπαλλήλων
     const employeesResult = await db.query(
       "SELECT * FROM employees ORDER  BY id ASC"
     );
     const employees = employeesResult.rows;
+
+    // Ανάκτηση μη ανατεθειμένων tasks
     const tasksResult = await db.query(
-      "SELECT tasks.*, employees.name AS employee_name FROM tasks LEFT JOIN employees ON tasks.employee_id = employees.id ORDER BY tasks.id ASC"
+      "SELECT tasks.*, employees.name AS employee_name FROM tasks LEFT JOIN employees ON tasks.employee_id = employees.id WHERE tasks.employee_id IS NULL ORDER BY tasks.id ASC"
     );
     const tasks = tasksResult.rows;
 
+    // Ανάκτηση εργασιών ανά υπάλληλο
     const employeeTasks = await db.query(
-      "SELECT employees.name,tasks.title FROM TASKS JOIN employees ON tasks.employee_id=employees.id ORDER BY employees.name "
+      "SELECT employees.name, tasks.title FROM tasks JOIN employees ON tasks.employee_id = employees.id ORDER BY employees.name"
     );
     const tasksByEmployee = employeeTasks.rows;
 
+    // Απόδοση δεδομένων στη σελίδα
     res.render("admin.ejs", {
       listEmployeeTitle: "Admin Window",
       listEmployees: employees,
-      listTasks: tasks,
-      tasksByEmployee: tasksByEmployee, // tasks/employee
+      listTasks: tasks, // Περιλαμβάνει μόνο μη ανατεθειμένα tasks
+      tasksByEmployee: tasksByEmployee,
     });
   } catch (error) {
     console.error(error);
-    res.status(500).send("An error occured while fetching data");
+    res.status(500).send("An error occurred while fetching data");
   }
 });
 
@@ -54,9 +59,7 @@ app.get("/", async (req, res) => {
 
 app.post("/editEmployee", async (req, res) => {
   const name = req.body.updatedEmployeeName;
-  if (!employee) {
-    return res.status(500).send("Employee name can not be empty!");
-  }
+
   const id = req.body.updatedEmployeeId;
   try {
     await db.query("UPDATE employees SET name=($1) WHERE id=$2", [name, id]);

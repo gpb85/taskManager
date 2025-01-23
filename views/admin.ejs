@@ -11,10 +11,26 @@
     <header></header>
     <main>
       <div class="box" id="heading">
-        <h1>Add new employee</h1>
         <h2><%= listEmployeeTitle %></h2>
       </div>
-      <div class="box employee">
+      <div class="box-employee">
+        <form class="employee" action="/add-employee" method="post">
+          <input
+            type="text"
+            name="newEmployee"
+            placeholder="New Employee"
+            autocomplete="off"
+            autofocus="true"
+          />
+          <button
+            class="addEmployee"
+            type="submit"
+            name="listEmployee"
+            value="<%= listEmployeeTitle %>"
+          >
+            +
+          </button>
+        </form>
         <% for(let employee of listEmployees){%>
         <div class="employee">
           <form action="/delete-employee" method="post">
@@ -49,7 +65,8 @@
               hidden
             >
               <img
-                src="../public/assets/icons/check-solid.svg"
+                class="icon"
+                src="/assets/icons/check-solid.svg"
                 alt="tick image"
               />
             </button>
@@ -61,34 +78,34 @@
           >
             <img
               class="icon"
-              src="../public/assets/icons/pencil-solid.svg"
+              src="/assets/icons/pencil-solid.svg"
               alt="pencil-image"
             />
           </button>
         </div>
 
         <% } %>
+      </div>
 
-        <form class="employee" action="/add-employee" method="post">
+      <div class="box-task">
+        <form class="task" action="/add-task" method="post">
           <input
             type="text"
-            name="newEmployee"
-            placeholder="New Employee"
+            name="newTask"
+            placeholder="New Task"
             autocomplete="off"
             autofocus="true"
           />
           <button
-            class="addEmployee"
+            class="add"
             type="submit"
-            name="listEmployee"
+            name="taskList"
             value="<%= listEmployeeTitle %>"
           >
             +
           </button>
         </form>
-      </div>
 
-      <div class="box task">
         <% for (let task of listTasks){%>
 
         <div class="task">
@@ -121,7 +138,8 @@
               hidden
             >
               <img
-                src="/public/assets/icons/check-solid.svg"
+                class="icon"
+                src="/assets/icons/check-solid.svg"
                 alt="tick-image"
               />
             </button>
@@ -132,7 +150,8 @@
             onclick="handler('task','<%=task.id%>')"
           >
             <img
-              src="../public/assets/icons/pencil-solid.svg"
+              class="icon"
+              src="/assets/icons/pencil-solid.svg"
               alt="pencil-image"
             />
           </button>
@@ -151,37 +170,11 @@
           </form>
         </div>
         <%} %>
-
-        <form class="task" action="/add-task" method="post">
-          <input
-            type="text"
-            name="newTask"
-            placeholder="New Task"
-            autocomplete="off"
-            autofocus="true"
-          />
-          <button
-            class="add"
-            type="submit"
-            name="taskList"
-            value="<%= listEmployeeTitle %>"
-          >
-            +
-          </button>
-        </form>
       </div>
 
       <div class="assign-box">
         <h2>Tasks by employee</h2>
         <table>
-          <thead>
-            <tr>
-              Employee Name
-            </tr>
-            <tr>
-              Assigned Tasks
-            </tr>
-          </thead>
           <tbody>
             <% tasksByEmployee.forEach(function(task){ %>
 
