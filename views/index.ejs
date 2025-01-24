@@ -20,15 +20,12 @@
         <ul>
           <% employeeTasks = tasksByEmployee.filter(task => task.employee_name
           === employee.name); employeeTasks.forEach(task => { %>
-          <li
-            id="task<%= task.id %>"
-            class="<%= task.completed ? 'completed' : '' %>"
-          >
+
+          <li id="task<%= task.id %>">
             <form action="/toggle-task-status" method="post">
               <input type="hidden" name="taskId" value="<%= task.id %>" />
-              <input type="checkbox" name="taskStatus" value="<%=task.id%>>"
-              onchange="this.form.submit()" <%= task.completed ? 'checked' : ''
-              %> />
+              <input type="checkbox" name="taskStatus" value="<%= "true" %>"
+              onchange="this.form.submit()" />
             </form>
 
             <span><%= task.title %></span>

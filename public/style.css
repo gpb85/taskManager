@@ -134,8 +134,7 @@ footer {
   grid-area: 3/1/4/4;
   text-align: center;
 }
-
-.completed {
-  background-color: #d3ffd3; /* Ανοιχτό πράσινο για ολοκληρωμένα tasks */
-  text-decoration: line-through; /* Διαγραμμένο κείμενο */
+.completed-task {
+  text-decoration: line-through;
+  color: #999;
 }

@@ -29,7 +29,7 @@ app.get("/employee-tasks", async (req, res) => {
     const employees = employeesResult.rows;
 
     const employeesTasks = await db.query(
-      "SELECT employees.name AS employee_name, tasks.title FROM tasks JOIN employees ON tasks.employee_id = employees.id ORDER BY employees.name"
+      "SELECT employees.name AS employee_name, tasks.title, tasks.id AS id, tasks.completed AS completed_task FROM tasks JOIN employees ON tasks.employee_id = employees.id ORDER BY employees.name ASC"
     );
     const tasksByEmployee = employeesTasks.rows;
 
@@ -60,7 +60,7 @@ app.get("/", async (req, res) => {
 
     // Fetch tasks by employee
     const employeeTasks = await db.query(
-      "SELECT employees.name, tasks.title FROM tasks JOIN employees ON tasks.employee_id = employees.id ORDER BY employees.name"
+      "SELECT employees.name, tasks.title, tasks.completed FROM tasks JOIN employees ON tasks.employee_id = employees.id ORDER BY employees.name"
     );
     const tasksByEmployee = employeeTasks.rows;
 
@@ -79,14 +79,10 @@ app.get("/", async (req, res) => {
 
 app.post("/toggle-task-status", async (req, res) => {
   const taskId = req.body.taskId;
-  const taskStatus = req.body.taskStatus === "true"; // Αν το checkbox είναι τσεκαρισμένο, taskStatus = true
+  const taskStatus = req.body.taskStatus;
+
   console.log("taskId:", taskId); // Θα πρέπει να δεις το taskId
   console.log("taskStatus:", taskStatus); // Θα πρέπει να δεις το taskStatus (true ή false)
-
-  if (!taskId) {
-    console.error("No taskId provided.");
-    return res.status(400).send("Task ID is required.");
-  }
 
   try {
     const tasksResult = await db.query(
@@ -94,11 +90,6 @@ app.post("/toggle-task-status", async (req, res) => {
       [taskId]
     );
     const task = tasksResult.rows[0];
-
-    if (!task) {
-      console.error("Task not found.");
-      return res.status(404).send("Task not found.");
-    }
 
     // Ενημερώνουμε την κατάσταση του task στη βάση δεδομένων
     await db.query("UPDATE tasks SET completed=$1 WHERE id=$2", [

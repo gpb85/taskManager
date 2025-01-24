@@ -182,10 +182,17 @@
         <h2>Tasks by employee</h2>
         <table>
           <tbody>
-            <% tasksByEmployee.forEach(function(task) { %>
-            <tr class="<%= task.completed ? 'completed' : '' %>">
+            <% tasksByEmployee.forEach(function(task) { %> <%=
+            console.log(task); %>
+            <tr
+              id="taskRow<%= task.id %>"
+              class="<%= task.completed ? 'completed' : '' %>"
+            >
               <td><%= task.name %></td>
-              <td><%= task.title %></td>
+              <!-- Δυναμική κλάση στο title -->
+              <td class="<%= task.completed ? 'completed-task' : '' %>">
+                <%= task.title %>
+              </td>
             </tr>
             <% }); %>
           </tbody>
